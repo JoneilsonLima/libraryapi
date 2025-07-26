@@ -1,7 +1,8 @@
 package com.projeto.libraryapi.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "autor")
-@Data
 public class Autor {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,4 +26,40 @@ public class Autor {
 
     @OneToMany(mappedBy = "autor")
     private List<Livro> livros;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public String getNacionalidade() {
+        return nacionalidade;
+    }
+
+    public List<Livro> getLivros() {
+        return livros;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    public void setNacionalidade(String nacionalidade) {
+        this.nacionalidade = nacionalidade;
+    }
+
+    public void setLivros(List<Livro> livros) {
+        this.livros = livros;
+    }
 }
