@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/autores")
@@ -19,11 +21,6 @@ public class AutorController {
     }
 
     private final AutorService autorService;
-
-    @GetMapping
-    public ResponseEntity<Void> ola(){
-        return new ResponseEntity("tudo certo", HttpStatus.OK);
-    }
 
     @PostMapping
     public ResponseEntity<Void>  salvar(@RequestBody AutorDTO autor) {
@@ -68,5 +65,23 @@ public class AutorController {
 
         autorService.deletar(autorOptional.get());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AutorDTO>> pesquisar(
+            @RequestParam(value = "nome", required = false) String nome,
+            @RequestParam(value = "nacionalidade", required = false) String nacionalidade
+    ) {
+        List<AutorDTO> autorDTOList = autorService.pesquisar(nome, nacionalidade)
+                .stream()
+                .map(autor -> new AutorDTO(
+                            autor.getId(),
+                            autor.getNome(),
+                            autor.getDataNascimento(),
+                            autor.getNacionalidade()
+                    )
+                ).toList();
+
+        return ResponseEntity.ok(autorDTOList);
     }
 }
