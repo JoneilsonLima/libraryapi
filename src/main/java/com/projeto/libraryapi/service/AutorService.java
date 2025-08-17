@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,6 +21,13 @@ public class AutorService {
 
     public Autor salvar(Autor autor) {
         return autorRepository.save(autor);
+    }
+
+    public void atualizar(Autor autor) {
+        if(Objects.isNull(autor.getId())) {
+            throw new IllegalArgumentException("Para atualizar, é necessário que o autor já esteja salvo na base.");
+        }
+        autorRepository.save(autor);
     }
 
     public Optional<Autor> obterPorId(UUID id) {
