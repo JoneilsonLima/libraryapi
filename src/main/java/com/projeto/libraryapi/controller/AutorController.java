@@ -93,22 +93,27 @@ public class AutorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizar(
+    public ResponseEntity<Object> atualizar(
             @PathVariable String id, @RequestBody AutorDTO autorDTO) {
-        var idAutor = UUID.fromString(id);
-        Optional<Autor> autorOptional = autorService.obterPorId(idAutor);
+        try {
+            var idAutor = UUID.fromString(id);
+            Optional<Autor> autorOptional = autorService.obterPorId(idAutor);
 
-        if (autorOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            if (autorOptional.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            var autor = autorOptional.get();
+            autor.setNome(autorDTO.nome());
+            autor.setNacionalidade(autorDTO.nacionalidade());
+            autor.setDataNascimento(autorDTO.dataNascimento());
+
+            autorService.atualizar(autor);
+
+            return ResponseEntity.noContent().build();
+        } catch (RegistroDuplicadoException e) {
+            var erro = ErroResposta.conflito(e.getMessage());
+            return ResponseEntity.status(erro.status()).body(erro);
         }
-
-        var autor = autorOptional.get();
-        autor.setNome(autorDTO.nome());
-        autor.setNacionalidade(autorDTO.nacionalidade());
-        autor.setDataNascimento(autorDTO.dataNascimento());
-
-        autorService.atualizar(autor);
-
-        return ResponseEntity.noContent().build();
     }
 }
