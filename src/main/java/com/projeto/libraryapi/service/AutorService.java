@@ -1,9 +1,7 @@
 package com.projeto.libraryapi.service;
 
-import com.projeto.libraryapi.controller.AutorDTO;
 import com.projeto.libraryapi.model.Autor;
 import com.projeto.libraryapi.repository.AutorRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
