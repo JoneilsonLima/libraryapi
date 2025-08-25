@@ -2,6 +2,7 @@ package com.projeto.libraryapi.controller;
 
 import com.projeto.libraryapi.controller.dto.AutorDTO;
 import com.projeto.libraryapi.controller.dto.ErroResposta;
+import com.projeto.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import com.projeto.libraryapi.exceptions.RegistroDuplicadoException;
 import com.projeto.libraryapi.model.Autor;
 import com.projeto.libraryapi.service.AutorService;
@@ -62,16 +63,21 @@ public class AutorController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable String id) {
-        var idAutor = UUID.fromString(id);
-        Optional<Autor> autorOptional = autorService.obterPorId(idAutor);
+    public ResponseEntity<Object> deletar(@PathVariable String id) {
+        try {
+            var idAutor = UUID.fromString(id);
+            Optional<Autor> autorOptional = autorService.obterPorId(idAutor);
 
-        if (autorOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            if (autorOptional.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            autorService.deletar(autorOptional.get());
+            return ResponseEntity.noContent().build();
+        } catch (OperacaoNaoPermitidaException e) {
+            var erro = ErroResposta.respostaPadrao(e.getMessage());
+            return ResponseEntity.status(erro.status()).body(erro);
         }
-
-        autorService.deletar(autorOptional.get());
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
